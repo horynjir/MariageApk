@@ -28,7 +28,7 @@ public class About extends Activity{
         //text2 = (TextView)findViewById(R.id.about2);
         text3 = (TextView)findViewById(R.id.about3);
         text4 = (EditText)findViewById(R.id.about4);
-
+/**/
 
         text1.setText("About");
         text4.setText("This application was created for PR2 like a semestral project. For more informations contact me on horynajirka@seznam.cz");
