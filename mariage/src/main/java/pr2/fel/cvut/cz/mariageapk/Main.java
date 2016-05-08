@@ -7,19 +7,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.util.logging.Logger;
 
 
 public class Main extends ActionBarActivity {
     private String name;
     private int game;
     private EditText newName;
+    private static final Logger LOG = Logger.getLogger(Player.class.getName());
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +33,7 @@ public class Main extends ActionBarActivity {
      * This method start when button New game is clicked. It sets name of user and starts new activity by intent
      */
     public void setNewGame(View view){
+        LOG.info("New game is created");
         game=0;
         newName=(EditText)findViewById(R.id.name);
         name = newName.getText().toString();
@@ -45,7 +43,11 @@ public class Main extends ActionBarActivity {
         startActivity(newGame);
     }
 
+    /**
+     *This method starts after clicking on button continue and it starts new activity and tryes load saved data from txt file
+     */
     public void continueGame(View view){
+        LOG.info("User want to continue in previous game");
         game=1;
         newName=(EditText)findViewById(R.id.name);
         name = newName.getText().toString();

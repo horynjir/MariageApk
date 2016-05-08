@@ -23,50 +23,42 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Jiří
  */
 public class Arena extends Activity {
-    Card[] card;
-    Card[] talon = new Card[2];
-    int playerCount = 0;
-    Player[] player = new Player[3];
-    Player player1;
-    Player player2;
-    Player player3;
-    int removed = 0;
-    int flek = 0;
-    int game = 0;
-    int trump=0;
-    int localTrump=0;
-    int turnPhase;
-    int turnCount=0;
-    boolean playing=false;
-    ImageButton[] playerCard=new ImageButton[10];
-    ImageView[] bot1=new ImageView[10];
-    ImageView[] bot2=new ImageView[10];
-    ImageView[] playerTalon=new ImageView[2];
-    ImageButton[] trumps = new ImageButton[4];
-    ImageView[] littleDeckImage = new ImageView[3];
-    Card[] littleDeck = new Card[3];
-    SeekBar removeDeck;
-    TextView count;
-    TextView actual, coins1, coins2, playerCoins, name1, name2, playerName, playedGame, message;
-    Button yes, no, cancel, turn, result, nextRound;
-    int licitationPhase=0;
-    int tp=0;
-    boolean clickable=false;
-    Player winner, defeated, expectant;
-    Player notBot;
-    ImageView trumpImage;
-    String name;
-    int continueGame;
-    int swap=0;
+    private Card[] card;
+    private Card[] talon = new Card[2];
+    private Player[] player = new Player[3];
+    private Player player1, player2, player3, notBot, winner, defeated, expectant;
+    private int removed, flek, game, trump, localTrump, turnCount, playerCount, tp, swap, licitationPhase = 0;
+    private int turnPhase;
+    private boolean playing=false;
+    private ImageButton[] playerCard=new ImageButton[10];
+    private ImageView[] bot1=new ImageView[10];
+    private ImageView[] bot2=new ImageView[10];
+    private ImageView[] playerTalon=new ImageView[2];
+    private ImageButton[] trumps = new ImageButton[4];
+    private ImageView[] littleDeckImage = new ImageView[3];
+    private Card[] littleDeck = new Card[3];
+    private SeekBar removeDeck;
+    private TextView count;
+    private TextView actual, coins1, coins2, playerCoins, name1, name2, playerName, playedGame, message;
+    private Button yes, no, cancel, turn, result, nextRound;
+    private boolean clickable=false;
+    private ImageView trumpImage;
+    private String name;
+    private int continueGame;
+    final static String ERROR = "Something is wrong";
+
+    private static final Logger LOG = Logger.getLogger(Arena.class.getName());
 
     /**
-     *This method is called after start this activity. It makes new players, deck and shuffle it, initialize components and starts game
+     *This method is called after start this activity. It makes new players, deck and shuffle it, initialize components and starts game.
+     * If button continue was clicked, this method starts loadData method which tryes to load saved data from file
      */
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -74,8 +66,8 @@ public class Arena extends Activity {
         initialize();
         name = getIntent().getStringExtra("SLOVO");
         continueGame = getIntent().getIntExtra("GAME", 0);
-
         if(continueGame==0) {
+            LOG.info("New game was created");
             player1 = new Player(name, false, 50, 1);
             player2 = new Player("Bot Bert", true, 50, 2);
             player3 = new Player("Bot Rudolf", true, 50, 3);
@@ -99,53 +91,62 @@ public class Arena extends Activity {
         else loadData();
     }
 
+    /**
+     * This method is called after stop of this app and is saves important data to load them in future. It saves them to txt file
+     * It saves name, count of coins, order of players and cards
+     */
     protected void onStop(){
+        LOG.info("Program is trying to save data");
         super.onStop();
         BufferedWriter writer = null;
         try {
             FileOutputStream fileOutputStream = openFileOutput("file.txt", Context.MODE_WORLD_READABLE);
-            writer=new BufferedWriter((new OutputStreamWriter(fileOutputStream)));
+            writer=new BufferedWriter(new OutputStreamWriter(fileOutputStream));
             try {
                 writer.write(name);
                 writer.newLine();
-                writer.write(""+swap);
+                writer.write(Integer.toString(swap));
                 writer.newLine();
                 for(int i=0; i<3; i++) {
-                    writer.write(""+player[i].getCoins());
+                    writer.write(Integer.toString(player[i].getCoins()));
                     writer.newLine();
                 }
                 for(int i=0; i<32; i++) {
-                    writer.write(""+card[i].getId());
+                    writer.write(Integer.toString(card[i].getId()));
                     writer.newLine();
                 }
-                writer.write(""+removed);
+                writer.write(Integer.toString(removed));
                 writer.newLine();
                 writer.flush();
                 Toast.makeText(Arena.this, "Game saved", Toast.LENGTH_SHORT).show();
 
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.info(String.valueOf(e));
             }
         } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            LOG.info(String.valueOf(e));
         }
         finally {
             if(writer!=null){
                 try {
                     writer.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOG.info(String.valueOf(e));
                 }
             }
         }
     }
 
+    /**
+     * this method is called if user want to continue in previous game. It loads data from txt file and set user name,
+     * count of coins, cards and other
+     */
     public void loadData(){
+        LOG.info("Program is trying to load data");
         BufferedReader reader=null;
         try {
             FileInputStream fileInputStream = openFileInput("file.txt");
-            reader=new BufferedReader((new InputStreamReader(fileInputStream)));
-            StringBuffer stringBuffer=new StringBuffer();
+            reader=new BufferedReader(new InputStreamReader(fileInputStream));
             String temp="";
             if((temp=reader.readLine())!=null){
                 name=temp;
@@ -205,16 +206,16 @@ public class Arena extends Activity {
 
         } catch (FileNotFoundException e) {
             this.finish();
-            e.printStackTrace();
+            LOG.info(String.valueOf(e));
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.info(String.valueOf(e));
         }
         finally {
             if(reader!=null){
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOG.info(String.valueOf(e));
                 }
             }
         }
@@ -224,6 +225,7 @@ public class Arena extends Activity {
      * This adds new player to an array for better work
      */
     private void addPlayer(Player player) {
+        LOG.info("Player was added to game");
         this.player[playerCount] = player;
         playerCount++;
     }
@@ -234,7 +236,6 @@ public class Arena extends Activity {
      * After removing of deck, dealing of cards will start
      */
     private void game(){
-
         actual.setText("Removing of deck");
         if(!player[2].isBot()) {
             removeDeck.setVisibility(View.VISIBLE);
@@ -249,6 +250,7 @@ public class Arena extends Activity {
                         public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
                             count.setText(i + " / " + seekBar.getMax());
                             progress = i;
+                            LOG.info("SeekBar is using");
                         }
 
                         @Override
@@ -261,8 +263,8 @@ public class Arena extends Activity {
                             message.setVisibility(View.GONE);
                             removeDeck.setVisibility(View.GONE);
                             count.setVisibility(View.GONE);
-                            card=player[2].removeDeck(card, progress);
-                            removed=1;
+                            card = player[2].removeDeck(card, progress);
+                            removed = 1;
                             deal();
                         }
                     }
@@ -280,42 +282,44 @@ public class Arena extends Activity {
      * After this licitation starts. If player is not bot, it makes yes and no buttons visible for control his decision
      */
     private void deal(){
-                actual.setText("Dealing");
-                int temp = 0;
-                int pc=0;
-                for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 5; j++) {
-                        player[i].addCard(card[temp]);
-                        if(!player[i].isBot()){
-                            playerCard[pc].setImageResource(card[temp].getId());
-                            playerCard[pc].setVisibility(View.VISIBLE);
-                            pc++;
-                        }
-                        temp++;
-                    }
+        LOG.info("Cards are dealing");
+        actual.setText("Dealing");
+        int temp = 0;
+        int pc=0;
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 5; j++) {
+                player[i].addCard(card[temp]);
+                if(!player[i].isBot()){
+                    playerCard[pc].setImageResource(card[temp].getId());
+                    playerCard[pc].setVisibility(View.VISIBLE);
+                    pc++;
                 }
-                for (int i = 0; i < 2; i++) {
-                    talon[i] = card[temp];
-                    temp++;
+                temp++;
+            }
+        }
+        for (int i = 0; i < 2; i++) {
+            talon[i] = card[temp];
+            temp++;
+        }
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 5; j++) {
+                player[i].addCard(card[temp]);
+                if(!player[i].isBot()){
+                    playerCard[pc].setImageResource(card[temp].getId());
+                    playerCard[pc].setVisibility(View.VISIBLE);
+                    pc++;
                 }
-                for (int i = 0; i < 3; i++) {
-                    for (int j = 0; j < 5; j++) {
-                        player[i].addCard(card[temp]);
-                        if(player[i].isBot()==false){
-                            playerCard[pc].setImageResource(card[temp].getId());
-                            playerCard[pc].setVisibility(View.VISIBLE);
-                            pc++;
-                        }
-                        temp++;
-                    }
-                }
-                for(int i=0; i<10; i++){
-                    bot1[i].setVisibility(View.VISIBLE);
-                    bot2[i].setVisibility(View.VISIBLE);
-                }
+                temp++;
+            }
+        }
+        for(int i=0; i<10; i++){
+            bot1[i].setVisibility(View.VISIBLE);
+            bot2[i].setVisibility(View.VISIBLE);
+        }
 
         licitationPhase++;
         if(!player[0].isBot() || !player[2].isBot()) {
+            LOG.info("Program is waiting for user input");
             message.setVisibility(View.VISIBLE);
             message.setText("Do you want play higher game (Betl)?");
             yes.setVisibility(View.VISIBLE);
@@ -332,6 +336,7 @@ public class Arena extends Activity {
      * In dependation on licitation phase is than started next method
      */
     public void yesOrNo(View view){
+        LOG.info("Button was clicked");
         message.setVisibility(View.GONE);
         switch (view.getId()){
             case R.id.yes:
@@ -341,7 +346,7 @@ public class Arena extends Activity {
                 notBot.setYesOrNo(0);
                 break;
             default:
-                Toast.makeText(Arena.this, "Something is wrong", Toast.LENGTH_SHORT).show();
+                LOG.warning(ERROR);
         }
         yes.setVisibility(View.GONE);
         no.setVisibility(View.GONE);
@@ -356,7 +361,7 @@ public class Arena extends Activity {
                 flek(winner, defeated, expectant);
                 break;
             default:
-                Toast.makeText(Arena.this, "Something is wrong", Toast.LENGTH_SHORT).show();
+                LOG.warning(ERROR);
         }
     }
 
@@ -364,6 +369,7 @@ public class Arena extends Activity {
      * If player wins licitation four imagesButtons are setted visible. On click on one of them is called this method which sets color of trumps and call next method
      */
     public void trumps(View view){
+        LOG.info("Some trump should be chosen");
         switch (view.getId()){
             case R.id.hearts:
                 trump=0;
@@ -393,6 +399,7 @@ public class Arena extends Activity {
      * Int tp means talon phase. There are 2 cards in talon so the second way of code is called just 2 times and than are buttons set unclickable and next method is called
      */
     public void clickCard(View view){
+        LOG.info("User clicked on card");
         if(clickable) {
             Card temp;
             int cp = 0; //card position
@@ -433,7 +440,7 @@ public class Arena extends Activity {
                 default:
                     cp = 1;
             }
-            if(playing==true){
+            if(playing){
                 playing(cp);
             }
             else {
@@ -445,7 +452,9 @@ public class Arena extends Activity {
                     playerCard[cp].setImageResource(winner.getPlayerCard(cp).getId());
                 }
                 tp++;
-                if(tp==1) Toast.makeText(Arena.this, "Set card for swap with second card in talon, X for nothing", Toast.LENGTH_LONG).show();
+                if(tp==1) {
+                    Toast.makeText(Arena.this, "Set card for swap with second card in talon, X for nothing", Toast.LENGTH_LONG).show();
+                }
                 if (tp > 1) {
                     clickable = false;
                     playerTalon[0].setVisibility(View.GONE);
@@ -464,6 +473,7 @@ public class Arena extends Activity {
      * @param cp is card position. It is position of card in array
      */
     private void playing(int cp) {
+        LOG.info("Player set some card");
         Card temp;
         Player tempPlayer = winner;
         switch (turnPhase) {
@@ -477,7 +487,7 @@ public class Arena extends Activity {
                 tempPlayer = expectant;
                 break;
             default:
-                Toast.makeText(Arena.this, "Something is wrong", Toast.LENGTH_SHORT).show();
+                LOG.warning(ERROR);
         }
         temp = tempPlayer.getPlayerCard(cp);
         if (turnPhase == 1) {
@@ -512,23 +522,29 @@ public class Arena extends Activity {
                     expectant = tempPlayer;
                     comparison();
                     tempPlayer.getPlayerCard(cp).setColor(tempPlayer.getPlayerCard(cp).getColor() + 4);
-                    if (turnCount < 10) turn.setVisibility(View.VISIBLE);
-                    else result.setVisibility(View.VISIBLE);
+                    if (turnCount < 10) {
+                        turn.setVisibility(View.VISIBLE);
+                    }
+                    else {
+                        result.setVisibility(View.VISIBLE);
+                    }
                     break;
                 default:
-                    Toast.makeText(Arena.this, "Something is wrong", Toast.LENGTH_SHORT).show();
+                    LOG.warning(ERROR);
             }
         }
     }
 
     /**
-     *
-     * @param level
-     * @param deffender
-     * @param attacker
-     * @param exp
+     *  This method begins licitate game, it means it sets "value" and type of game. Winner of licitation has some benefits, It has two rounds
+     * @param level is type of current game
+     * @param deffender is licitating Player with advantage
+     * @param attacker is licitating Player  with disadvantage
+     *                 If deffender and attacker want play higher game, higher game will play deffender
+     * @param exp is waiting player
      */
     private void firstLicitation(int level, Player deffender, Player attacker, Player exp) {
+        LOG.info("First licitation begins");
         actual.setText("First licitaion");
         game=level;
         winner = deffender;
@@ -546,10 +562,9 @@ public class Arena extends Activity {
             }
         }
         else{
-            deffLic=notBot.getYesOrNo();;
-            attLic = attacker.licitate(game+1);
+            deffLic = notBot.getYesOrNo();
+            attLic = attacker.licitate(game + 1);
         }
-
         if(deffLic==1){
             game++;
             winner=deffender;
@@ -563,7 +578,6 @@ public class Arena extends Activity {
         else{
             winner=deffender;
             defeated=attacker;
-
         }
         licitationPhase++;
         if(!winner.isBot() || !expectant.isBot()) {
@@ -575,10 +589,18 @@ public class Arena extends Activity {
         else {
             secondLicitation(game, winner, expectant, defeated);
         }
-
     }
 
+    /**
+     *  This method begins licitate game, it means it sets "value" and type of game. Winner of licitation has some benefits. This is a second round of licitation
+     * @param level is type of current game
+     * @param deffender is licitating Player with advantage
+     * @param attacker is licitating Player  with disadvantage
+     *                 If deffender and attacker want play higher game, higher game will play deffender
+     * @param exp is waiting player
+     */
     private void secondLicitation(int level, Player deffender, Player attacker, Player exp) {
+        LOG.info("Second licitation begins");
         actual.setText("Second licitation");
         game=level;
         winner = deffender;
@@ -597,7 +619,7 @@ public class Arena extends Activity {
         }
         else{
             deffLic=notBot.getYesOrNo();
-            attLic = attacker.licitate(game+1);
+            attLic = attacker.licitate(game + 1);
         }
 
         if(deffLic==1){
@@ -618,15 +640,22 @@ public class Arena extends Activity {
         talon(winner);
     }
 
+    /**
+     * Player with advantage gets two more card and he can swap two his cards with them
+     * If Player is not bot, cards will be set as clickable
+     * @param winner is Player who won licitation so he get talon
+     */
     private void talon(Player winner){
         actual.setText("Setting talon");
         Player playerTemp=winner;
         if(playerTemp.isBot()){
+            LOG.info("Bot gets talon");
             talon = playerTemp.setTalon(talon);
             trump = playerTemp.chooseTrumfs();
             playerFlek();
         }
         else{
+            LOG.info("User gets talon");
             Toast.makeText(Arena.this, "Set card for swap with first card in talon, X for nothing", Toast.LENGTH_LONG).show();
             talon = playerTemp.setTalon(talon);
             cancel.setVisibility(View.VISIBLE);
@@ -638,13 +667,21 @@ public class Arena extends Activity {
         }
     }
 
+    /**
+     * After swap of cards with talon, trumps will be visible for setting them on screen, if winner of licitation is not a bot.
+     */
     private void playerSetTrump(){
         for(int i=0; i<4; i++){
             trumps[i].setVisibility(View.VISIBLE);
         }
     }
 
+    /**
+     * This sets value of game by player. It makes visible accept or decline button on screen
+     * Of nobody wants flek (his cards are not good) round ends
+     */
     private void playerFlek(){
+        LOG.info("Program will be expecting user action for flecking");
         actual.setText("Fleking");
         setTrumpIcon();
         licitationPhase++;
@@ -654,6 +691,9 @@ public class Arena extends Activity {
         no.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * this is just informative method for user. It sets text on screen, which says which type of game is currently playing
+     */
     private void setPlayedGame(){
                 switch(game){
                     case 0:
@@ -666,34 +706,44 @@ public class Arena extends Activity {
                         playedGame.setText("Durch");
                         break;
                     default:
-                        Toast.makeText(Arena.this, "Chyba ", Toast.LENGTH_SHORT).show();
+                        LOG.warning(ERROR);
                 }
                 playedGame.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * This is only informative method for user. It set icon on display which represents actual trumps
+     */
     private void setTrumpIcon(){
-                switch(trump){
-                    case 0:
-                        trumpImage.setImageResource(R.mipmap.hearts);
-                        break;
-                    case 1:
-                        trumpImage.setImageResource(R.mipmap.bells);
-                        break;
-                    case 2:
-                        trumpImage.setImageResource(R.mipmap.leaves);
-                        break;
-                    case 3:
-                        trumpImage.setImageResource(R.mipmap.acorns);
-                        break;
-                    default:
-                        Toast.makeText(Arena.this, "Chyba ", Toast.LENGTH_SHORT).show();
-                }
-                trumpImage.setVisibility(View.VISIBLE);
+        switch(trump){
+            case 0:
+                trumpImage.setImageResource(R.mipmap.hearts);
+                break;
+            case 1:
+                trumpImage.setImageResource(R.mipmap.bells);
+                break;
+            case 2:
+                trumpImage.setImageResource(R.mipmap.leaves);
+                break;
+            case 3:
+                trumpImage.setImageResource(R.mipmap.acorns);
+                break;
+            default:
+                LOG.warning(ERROR);
+        }
+        trumpImage.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * At first this method find out who want to flek and plays game with current cards. After it on depend on rules it set value of flek (max 2)
+     * @param player is winner of licitation
+     * @param opponent1 plays agains player
+     * @param opponent2 plays against player
+     */
     private void flek(Player player, Player opponent1, Player opponent2) {
-        Player flekPlayer[] = new Player[3];
-        int flekBool[] = new int[3];
+        LOG.info("Now is flecking phase");
+        Player[] flekPlayer = new Player[3];
+        int[] flekBool = new int[3];
         flekPlayer[0]=player;
         flekPlayer[1]=opponent1;
         flekPlayer[2]=opponent2;
@@ -720,9 +770,14 @@ public class Arena extends Activity {
         choosingGame();
     }
 
+    /**
+     * This method give user information which game is played and it sets color of trumps to each player
+     * If flek is 0, no game is playing and after clicking on button result round ends
+     */
     private void choosingGame() {
         String str="";
         if (flek != 0) {
+            LOG.info("Players are able to play");
             switch (game){
                 case 0:
                     str+="Game";
@@ -740,11 +795,17 @@ public class Arena extends Activity {
             playing=true;
             turn.setVisibility(View.VISIBLE);
         } else {
+            LOG.info("Game will not start");
             result.setVisibility(View.VISIBLE);
         }
     }
 
+    /**
+     * Each turn has to be confirmed by user by clicking on Next turn button. Then this method is called. Player who begins game sets first card.
+     * Then this card is pictured on screen. If player is not bot, cards on screen is clickable and real player set card. These methods are called ten times, becaouse each round has 10 turns
+     */
     public void playerTurn(View view){
+        LOG.info("First player is on turn");
         actual.setText("Your turn");
         turnCount++;
         for(int i=0; i<3; i++){
@@ -766,7 +827,12 @@ public class Arena extends Activity {
             clickable=true;
         }
     }
+
+    /**
+     * Similar to previous method. This one do not sets local trumps
+     */
     private void opponent1Turn(){
+        LOG.info("Second player is on turn");
         turnPhase=2;
         if(defeated.isBot){
             Card temp=defeated.setCard(localTrump);
@@ -780,7 +846,12 @@ public class Arena extends Activity {
             clickable=true;
         }
     }
+
+    /**
+     * Similar to previous method. This one do not sets local trumps
+     */
     private void opponent2Turn(){
+        LOG.info("Third player is on turn");
         turnPhase=3;
         if(expectant.isBot){
             Card temp=expectant.setCard(localTrump);
@@ -805,45 +876,46 @@ public class Arena extends Activity {
         }
     }
 
+    /**
+     * This mehod compare points of player after each turn. Player with highest yount of points gets little deck
+     */
     private void comparison() {
-        Thread comparison = new Thread(){
-            @Override
-            public void run() {
-                int playerPoints = littleDeck[0].cardPoints(localTrump, trump, game);
-                int opponent1Points = littleDeck[1].cardPoints(localTrump, trump, game);
-                int opponent2Points = littleDeck[2].cardPoints(localTrump, trump, game);
-                Player turnWinner;
-                if (playerPoints > opponent1Points && playerPoints > opponent2Points) {
-                    turnWinner = winner;
-                } else if (opponent1Points > playerPoints && opponent1Points > opponent2Points) {
-                    turnWinner = defeated;
-                } else {
-                    turnWinner = expectant;
-                }
-                for (int i = 0; i < 3; i++) {
-                    turnWinner.addToDeck(littleDeck[i]);
-                }/*
-                if(turnWinner.getId()==winner.getId()) winner=turnWinner;
-                else if(turnWinner.getId()==defeated.getId()) defeated=turnWinner;
-                else expectant=turnWinner;*/
-            }
-        };
-         comparison.start();
-
+        LOG.info("Now cards in little deck are compared");
+        int playerPoints = littleDeck[0].cardPoints(localTrump, trump, game);
+        int opponent1Points = littleDeck[1].cardPoints(localTrump, trump, game);
+        int opponent2Points = littleDeck[2].cardPoints(localTrump, trump, game);
+        Player turnWinner;
+        if (playerPoints > opponent1Points && playerPoints > opponent2Points) {
+            turnWinner = winner;
+        } else if (opponent1Points > playerPoints && opponent1Points > opponent2Points) {
+            turnWinner = defeated;
+        } else {
+            turnWinner = expectant;
+        }
+        for (int i = 0; i < 3; i++) {
+            turnWinner.addToDeck(littleDeck[i]);
+        }
     }
 
+    /**
+     *This method is called after clicking on result button and it evaulate current round.
+     * Who wins round depends on type of game. If Game was played, it depends on points. If Betl was played main Player wins only if he did not win every turn and in Durch he had to win avery turn to win whole round.
+     * At the and it actualize infromations on screen
+     */
     public void result(View view){
+        LOG.info("On screen shoud be results of round");
         actual.setText("End of this round");
         String mess1=winner.getName() + " wins and he \ngets ";
         String mess2=winner.getName() + " lose and he \ngive each opponent ";
         int coins=0;
         String mess="";
         result.setVisibility(View.GONE);
-        for(int i=0; i<3; i++){
-            littleDeckImage[i].setVisibility(View.GONE);
-        }
+        for(int i = 0; i<3;i++)
+            {
+                littleDeckImage[i].setVisibility(View.GONE);
+            }
         if(flek==0){
-            coins=defeated.pay(winner, flek, game)+expectant.pay(winner, flek, game);
+            coins= winnerWins();
             message.setVisibility(View.VISIBLE);
             message.setText("Because nobody flecked, " + winner.getName() + " \ngets a standart price: " + coins + "coins");
         }
@@ -852,31 +924,31 @@ public class Arena extends Activity {
                 int winnerPoints=winner.scoreOfGame();
                 int opponentsPoints=defeated.scoreOfGame()+expectant.scoreOfGame();
                 if(winnerPoints<opponentsPoints){
-                    coins=winner.pay(expectant, flek, game)+winner.pay(defeated, flek, game);
+                    coins=winnerLose();
                     mess=mess2;
                 }
                 else{
-                    coins=defeated.pay(winner, flek, game)+expectant.pay(winner, flek, game);
+                    coins= winnerWins();
                     mess=mess1;
                 }
             }
             else if(game==1){
                 if(winner.getDeckSize()!=0){
-                    coins=winner.pay(defeated, flek, game)+winner.pay(expectant, flek, game);
+                    coins=winnerLose();
                     mess=mess2;
                 }
                 else{
-                    coins=defeated.pay(winner, flek, game)+expectant.pay(winner, flek, game);
+                    coins= winnerWins();
                     mess=mess1;
                 }
             }
             else if(game==2){
                 if(winner.getDeckSize()!=30){
-                    coins=winner.pay(defeated, flek, game)+winner.pay(expectant, flek, game);
+                    coins=winnerLose();
                     mess=mess2;
                 }
                 else {
-                    coins=defeated.pay(winner, flek, game)+expectant.pay(winner, flek, game);
+                    coins= winnerWins();
                     mess=mess1;
                 }
             }
@@ -886,10 +958,22 @@ public class Arena extends Activity {
         message.setVisibility(View.VISIBLE);
         actualize();
         nextRound.setVisibility(View.VISIBLE);
-
     }
 
+    private int winnerWins(){
+        return defeated.pay(winner, flek, game)+expectant.pay(winner, flek, game);
+    }
+
+    private int winnerLose(){
+        return winner.pay(defeated, flek, game)+winner.pay(expectant, flek, game);
+    }
+
+    /**
+     * This method is called after clicking on button Next round and it will restart important variables and starts new round.
+     * It also swap players, because each of them has to play in every position.
+     */
     public void nextRound(View view){
+        LOG.info("Next round should starts");
         lineUpCards();
         message.setVisibility(View.GONE);
         nextRound.setVisibility(View.GONE);
@@ -901,7 +985,11 @@ public class Arena extends Activity {
         game();
     }
 
+    /**
+     * Because deck is shuffled just one times its important to let right order of cards. Method lineUpCards do this - it takes cards from players and lines them up
+     */
     private void lineUpCards(){
+        LOG.info("Cards should be lined up");
         int k=0;
         Card[] deckTemp;
         for(int i=0; i<3; i++){
@@ -917,7 +1005,11 @@ public class Arena extends Activity {
         }
     }
 
+    /**
+     * This method is called after every round and it set important variables to default value
+     */
     private void restart(){
+        LOG.info("Variables are set to default");
         removed=0;
         flek=0;
         game=0;
@@ -932,24 +1024,28 @@ public class Arena extends Activity {
         playedGame.setVisibility(View.GONE);
     }
 
-    private void actualize(){
-                for(int i=0; i<3; i++){
-                    if(player[i].getId()==1){
-                        playerName.setText(player[i].getName());
-                        playerCoins.setText(player[i].getCoins() + " coins");
-                    }
-                    else if(player[i].getId()==2){
-                        name1.setText(player[i].getName());
-                        coins1.setText(player[i].getCoins() + " coins");
-                    }
-                    else{
-                        name2.setText(player[i].getName());
-                        coins2.setText(player[i].getCoins() + " coins");
-                    }
-                }
+    /**
+     * This method is called after some informative change - it actualize info on screen
+     */
+    private void actualize() {
+        LOG.info("Infromations are actualized");
+        String str = " coins";
+        for(int i = 0;i<3;i++){
+            if (player[i].getId() == 1) {
+                playerName.setText(player[i].getName());
+                playerCoins.setText(player[i].getCoins() + str);
+            } else if (player[i].getId() == 2) {
+                name1.setText(player[i].getName());
+                coins1.setText(player[i].getCoins() + str);
+            } else {
+                name2.setText(player[i].getName());
+                coins2.setText(player[i].getCoins() + str);
+            }
+        }
     }
 
     private void swapPlayers() {
+        LOG.info("Players were swapped");
         Player temp = player[2];
         player[2] = player[1];
         player[1] = player[0];
@@ -959,6 +1055,10 @@ public class Arena extends Activity {
         }
         swap++;
     }
+
+    /**
+     * This method "fins view by id" for every GIU component in Arena class
+     */
     private void initialize(){
         bot1[0]=(ImageView)findViewById(R.id.bot101);
         bot1[1]=(ImageView)findViewById(R.id.bot102);

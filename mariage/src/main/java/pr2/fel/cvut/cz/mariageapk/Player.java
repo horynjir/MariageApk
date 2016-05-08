@@ -5,6 +5,8 @@
  */
 package pr2.fel.cvut.cz.mariageapk;
 
+import java.util.logging.Logger;
+
 /**
  *
  * @author Jiří
@@ -16,7 +18,7 @@ public class Player{
     private int id;
     private String name;
     private Card[] deck = new Card[30];
-    private Card playerCard[] = new Card[10];
+    private Card[] playerCard = new Card[10];
     private int cardCount = 0;
     private int deckSize=0;
     boolean isBot;
@@ -27,6 +29,7 @@ public class Player{
     private int localTrump;
     private int yesOrNO=0;
     private Card[] talon = new Card[2];
+    private static final Logger LOG = Logger.getLogger(Player.class.getName());
 
     /**
      * Constructor for initilizate new player
@@ -36,6 +39,7 @@ public class Player{
      * @param id is number of player, each player has his own original id
      */
     Player(String name, boolean isBot, int coins, int id) {
+        LOG.info("New player was created");
         this.id=id;
         this.name = name;
         this.isBot = isBot;
@@ -47,6 +51,7 @@ public class Player{
      * @param flek is an integer which means if the game was played. If yes, cords color of non bot player is decreased by int 4, because in Arena.java it was increased for better counting of trump and local trumps
      */
     public void restart(int flek){
+        LOG.info("Players variable was set to default value");
         deckSize=0;
         cardCount=0;
         if(!isBot && flek!=0) {
@@ -89,8 +94,12 @@ public class Player{
         localTrumpCount=0;
         this.localTrump=localTrump;
         for(int i=0; i<cardCount; i++){
-            if(playerCard[i].getColor()==trump) trumpCount++;
-            if(playerCard[i].getColor()==localTrump) localTrumpCount++;
+            if(playerCard[i].getColor()==trump) {
+                trumpCount++;
+            }
+            if(playerCard[i].getColor()==this.localTrump) {
+                localTrumpCount++;
+            }
         }
     }
 
@@ -193,6 +202,7 @@ public class Player{
      * @return card which will be added to little deck
      */
     public Card setCard(int localTrump) {
+        LOG.info("Player should get some card to little deck");
         this.localTrump=localTrump;
         trumpsCount(localTrump);
         int a = (int) (Math.random() * cardCount);
@@ -330,6 +340,7 @@ public class Player{
      * @return if player is bot it returns cards which he swap with talon
      */
     public Card[] setTalon(Card[] talon) {
+        LOG.info("Player gets talon");
         this.talon = talon;
         if (isBot) {
             for (int i = 0; i < 2; i++) {
@@ -410,6 +421,7 @@ public class Player{
      * @return removed card as an array
      */
     public Card[] removeDeck(Card[] card, int h) {
+        LOG.info("Player is removing deck");
         int half = h;
         Card[] firstHalf = new Card[half];
         Card[] secondHalf = new Card[32 - half];
