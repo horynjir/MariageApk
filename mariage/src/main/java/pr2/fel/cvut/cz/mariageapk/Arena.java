@@ -52,7 +52,7 @@ public class Arena extends Activity {
     private ImageView trumpImage;
     private String name;
     private int continueGame;
-    final static String ERROR = "Something is wrong";
+    static final String ERROR = "Something is wrong";
 
     private static final Logger LOG = Logger.getLogger(Arena.class.getName());
 
@@ -89,136 +89,6 @@ public class Arena extends Activity {
             game();
        }
         else loadData();
-    }
-
-    /**
-     * This method is called after stop of this app and is saves important data to load them in future. It saves them to txt file
-     * It saves name, count of coins, order of players and cards
-     */
-    protected void onStop(){
-        LOG.info("Program is trying to save data");
-        super.onStop();
-        BufferedWriter writer = null;
-        try {
-            FileOutputStream fileOutputStream = openFileOutput("file.txt", Context.MODE_WORLD_READABLE);
-            writer=new BufferedWriter(new OutputStreamWriter(fileOutputStream));
-            try {
-                writer.write(name);
-                writer.newLine();
-                writer.write(Integer.toString(swap));
-                writer.newLine();
-                for(int i=0; i<3; i++) {
-                    writer.write(Integer.toString(player[i].getCoins()));
-                    writer.newLine();
-                }
-                for(int i=0; i<32; i++) {
-                    writer.write(Integer.toString(card[i].getId()));
-                    writer.newLine();
-                }
-                writer.write(Integer.toString(removed));
-                writer.newLine();
-                writer.flush();
-                Toast.makeText(Arena.this, "Game saved", Toast.LENGTH_SHORT).show();
-
-            } catch (IOException e) {
-                LOG.info(String.valueOf(e));
-            }
-        } catch (FileNotFoundException e) {
-            LOG.info(String.valueOf(e));
-        }
-        finally {
-            if(writer!=null){
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    LOG.info(String.valueOf(e));
-                }
-            }
-        }
-    }
-
-    /**
-     * this method is called if user want to continue in previous game. It loads data from txt file and set user name,
-     * count of coins, cards and other
-     */
-    public void loadData(){
-        LOG.info("Program is trying to load data");
-        BufferedReader reader=null;
-        try {
-            FileInputStream fileInputStream = openFileInput("file.txt");
-            reader=new BufferedReader(new InputStreamReader(fileInputStream));
-            String temp="";
-            if((temp=reader.readLine())!=null){
-                name=temp;
-            }
-
-            player1 = new Player(name, false, 50, 1);
-            player2 = new Player("Bot Bert", true, 50, 2);
-            player3 = new Player("Bot Rudolf", true, 50, 3);
-            addPlayer(player1);
-            addPlayer(player2);
-            addPlayer(player3);
-
-            if((temp=reader.readLine())!=null){
-                swap=Integer.parseInt(temp)-1;
-                for(int i=0; i<Integer.parseInt(temp); i++){
-                    swapPlayers();
-                }
-            }
-
-            for(int i=0; i<3; i++){
-                if((temp=reader.readLine())!=null) {
-                    player[i].setCoins(Integer.parseInt(temp));
-                }
-            }
-            MakeDeck deck = new MakeDeck();
-            deck.setDeck();
-            this.card = deck.getDeck();
-            int[] ides = new int[32];
-            Card[] tempcard = new Card[32];
-            for(int i=0; i<32; i++){
-                if((temp=reader.readLine())!=null) {
-                    ides[i]=Integer.parseInt(temp);
-                }
-            }
-            for(int j=0; j<32; j++){
-                for(int i=0; i<32; i++){
-                    if(card[i].getId()==ides[j]) tempcard[j]=card[i];
-                }
-            }
-            card=tempcard;
-            actualize();
-            for(int i=0; i< 3; i++){
-                if(!player[i].isBot()){
-                    notBot=player[i];
-                    break;
-                }
-            }
-            if((temp=reader.readLine())!=null) {
-                removed=Integer.parseInt(temp);
-            }
-            if(removed==0) {
-                game();
-            }
-            else {
-                deal();
-            }
-
-        } catch (FileNotFoundException e) {
-            this.finish();
-            LOG.info(String.valueOf(e));
-        } catch (IOException e) {
-            LOG.info(String.valueOf(e));
-        }
-        finally {
-            if(reader!=null){
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    LOG.info(String.valueOf(e));
-                }
-            }
-        }
     }
 
     /**
@@ -278,6 +148,47 @@ public class Arena extends Activity {
     }
 
     /**
+     * This mehod compare points of player after each turn. Player with highest yount of points gets little deck
+     */
+    private void comparison() {
+        Thread tr= new Thread() {
+            @Override
+            public void run() {
+                LOG.info("Now cards in little deck are compared");
+                int playerPoints = littleDeck[0].cardPoints(localTrump, trump, game);
+                int opponent1Points = littleDeck[1].cardPoints(localTrump, trump, game);
+                int opponent2Points = littleDeck[2].cardPoints(localTrump, trump, game);
+                Player turnWinner;
+                if(playerPoints>opponent1Points&&playerPoints>opponent2Points)
+
+                {
+                    turnWinner = winner;
+                }
+
+                else if(opponent1Points>playerPoints&&opponent1Points>opponent2Points)
+
+                {
+                    turnWinner = defeated;
+                }
+
+                else
+
+                {
+                    turnWinner = expectant;
+                }
+
+                for(int i = 0;i<3;i++)
+
+                {
+                    turnWinner.addToDeck(littleDeck[i]);
+                }
+            }
+        };
+        tr.start();
+    }
+
+
+    /**
      * These for loops deals cards to players in two rounds - 2 times 5 cards to each player and 2 to talon
      * After this licitation starts. If player is not bot, it makes yes and no buttons visible for control his decision
      */
@@ -286,6 +197,11 @@ public class Arena extends Activity {
         actual.setText("Dealing");
         int temp = 0;
         int pc=0;
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            LOG.info(String.valueOf(e));
+        }
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 5; j++) {
                 player[i].addCard(card[temp]);
@@ -813,6 +729,11 @@ public class Arena extends Activity {
         }
 
         turn.setVisibility(View.GONE);
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            LOG.info(String.valueOf(e));
+        }
         turnPhase=1;
         if(winner.isBot){
             Card temp=winner.setCard();
@@ -832,6 +753,11 @@ public class Arena extends Activity {
      * Similar to previous method. This one do not sets local trumps
      */
     private void opponent1Turn(){
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            LOG.info(String.valueOf(e));
+        }
         LOG.info("Second player is on turn");
         turnPhase=2;
         if(defeated.isBot){
@@ -851,6 +777,11 @@ public class Arena extends Activity {
      * Similar to previous method. This one do not sets local trumps
      */
     private void opponent2Turn(){
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            LOG.info(String.valueOf(e));
+        }
         LOG.info("Third player is on turn");
         turnPhase=3;
         if(expectant.isBot){
@@ -873,27 +804,6 @@ public class Arena extends Activity {
         }
         else {
             clickable=true;
-        }
-    }
-
-    /**
-     * This mehod compare points of player after each turn. Player with highest yount of points gets little deck
-     */
-    private void comparison() {
-        LOG.info("Now cards in little deck are compared");
-        int playerPoints = littleDeck[0].cardPoints(localTrump, trump, game);
-        int opponent1Points = littleDeck[1].cardPoints(localTrump, trump, game);
-        int opponent2Points = littleDeck[2].cardPoints(localTrump, trump, game);
-        Player turnWinner;
-        if (playerPoints > opponent1Points && playerPoints > opponent2Points) {
-            turnWinner = winner;
-        } else if (opponent1Points > playerPoints && opponent1Points > opponent2Points) {
-            turnWinner = defeated;
-        } else {
-            turnWinner = expectant;
-        }
-        for (int i = 0; i < 3; i++) {
-            turnWinner.addToDeck(littleDeck[i]);
         }
     }
 
@@ -1120,6 +1030,138 @@ public class Arena extends Activity {
         playedGame=(TextView)findViewById(R.id.game);
         nextRound=(Button)findViewById(R.id.nextRound);
         message=(TextView)findViewById(R.id.message);
+    }
+
+    /**
+     * This method is called after stop of this app and is saves important data to load them in future. It saves them to txt file
+     * It saves name, count of coins, order of players and cards
+     */
+    protected void onStop(){
+        LOG.info("Program is trying to save data");
+        super.onStop();
+        BufferedWriter writer = null;
+        try {
+            FileOutputStream fileOutputStream = openFileOutput("file.txt", Context.MODE_WORLD_READABLE);
+            writer=new BufferedWriter(new OutputStreamWriter(fileOutputStream));
+            try {
+                writer.write(name);
+                writer.newLine();
+                writer.write(Integer.toString(swap));
+                writer.newLine();
+                for(int i=0; i<3; i++) {
+                    writer.write(Integer.toString(player[i].getCoins()));
+                    writer.newLine();
+                }
+                for(int i=0; i<32; i++) {
+                    writer.write(Integer.toString(card[i].getId()));
+                    writer.newLine();
+                }
+                writer.write(Integer.toString(removed));
+                writer.newLine();
+                writer.flush();
+                Toast.makeText(Arena.this, "Game saved", Toast.LENGTH_SHORT).show();
+
+            } catch (IOException e) {
+                LOG.info(String.valueOf(e));
+            }
+        } catch (FileNotFoundException e) {
+            LOG.info(String.valueOf(e));
+        }
+        finally {
+            if(writer!=null){
+                try {
+                    writer.close();
+                } catch (IOException e) {
+                    LOG.info(String.valueOf(e));
+                }
+            }
+        }
+    }
+
+    /**
+     * this method is called if user want to continue in previous game. It loads data from txt file and set user name,
+     * count of coins, cards and other
+     */
+    public void loadData(){
+        LOG.info("Program is trying to load data");
+        BufferedReader reader=null;
+        try {
+            FileInputStream fileInputStream = openFileInput("file.txt");
+            reader=new BufferedReader(new InputStreamReader(fileInputStream));
+            String temp="";
+            if((temp=reader.readLine())!=null){
+                name=temp;
+            }
+
+            player1 = new Player(name, false, 50, 1);
+            player2 = new Player("Bot Bert", true, 50, 2);
+            player3 = new Player("Bot Rudolf", true, 50, 3);
+            addPlayer(player1);
+            addPlayer(player2);
+            addPlayer(player3);
+
+            if((temp=reader.readLine())!=null){
+                swap=Integer.parseInt(temp)-1;
+                for(int i=0; i<Integer.parseInt(temp); i++){
+                    swapPlayers();
+                }
+            }
+
+            for(int i=0; i<3; i++){
+                if((temp=reader.readLine())!=null) {
+                    player[i].setCoins(Integer.parseInt(temp));
+                }
+            }
+            MakeDeck deck = new MakeDeck();
+            deck.setDeck();
+            this.card = deck.getDeck();
+            int[] ides = new int[32];
+            Card[] tempcard = new Card[32];
+            for(int i=0; i<32; i++){
+                if((temp=reader.readLine())!=null) {
+                    ides[i]=Integer.parseInt(temp);
+                }
+            }
+            for(int j=0; j<32; j++){
+                for(int i=0; i<32; i++){
+                    if(card[i].getId()==ides[j]) {
+                        tempcard[j]=card[i];
+                    }
+                }
+            }
+            card=tempcard;
+            actualize();
+            for(int i=0; i< 3; i++){
+                if(!player[i].isBot()){
+                    notBot=player[i];
+                    break;
+                }
+            }
+            if((temp=reader.readLine())!=null) {
+                removed=Integer.parseInt(temp);
+            }
+            if(removed==0) {
+                game();
+            }
+            else {
+                deal();
+            }
+
+        } catch (FileNotFoundException e) {
+            this.finish();
+            LOG.info(String.valueOf(e));
+        } catch (IOException e) {
+            LOG.info(String.valueOf(e));
+        }
+        finally {
+            if(reader!=null){
+                try {
+                    reader.close();
+                } catch (IOException e) {
+                    LOG.info(String.valueOf(e));
+                }
+            }
+        }
     }
 
 }
