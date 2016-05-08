@@ -5,84 +5,286 @@
  */
 package pr2.fel.cvut.cz.mariageapk;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-
 /**
  *
  * @author Jiří
  */
-class Player {
-
-    private final int GAME_PRICE = 2;
-    private final int BETL_PRICE = 4;
-    private final int DURCH_PRICE = 6;
-    String name;
-    private ArrayList<Card> deck = new ArrayList<>();
-    private ArrayList<Card> playerCard = new ArrayList<>();
-    int cardCount = 0;
+public class Player{
+    private static final int GAME_PRICE = 1;
+    private static final int BETL_PRICE = 2;
+    private static final int DURCH_PRICE = 3;
+    private int id;
+    private String name;
+    private Card[] deck = new Card[30];
+    private Card playerCard[] = new Card[10];
+    private int cardCount = 0;
+    private int deckSize=0;
     boolean isBot;
-    int coins;
+    private int coins;
+    private int trumpCount;
+    private int localTrumpCount;
+    private int trump;
+    private int localTrump;
+    private int yesOrNO=0;
     private Card[] talon = new Card[2];
 
-    Player(String name, boolean isBot, int coins) {
+    /**
+     * Constructor for initilizate new player
+     * @param name is String which represents name of player
+     * @param isBot is a boolean which means if player is real user or proggramed player
+     * @param coins is an integer represents virtual cash
+     * @param id is number of player, each player has his own original id
+     */
+    Player(String name, boolean isBot, int coins, int id) {
+        this.id=id;
         this.name = name;
         this.isBot = isBot;
         this.coins = coins;
     }
 
-    public ArrayList<Card> getPlayerCard() {
-        return playerCard;
+    /**
+     * this method is called after each round and sets each important variable to default value
+     * @param flek is an integer which means if the game was played. If yes, cords color of non bot player is decreased by int 4, because in Arena.java it was increased for better counting of trump and local trumps
+     */
+    public void restart(int flek){
+        deckSize=0;
+        cardCount=0;
+        if(!isBot && flek!=0) {
+            for (int i = 0; i < 10; i++) {
+                playerCard[i].setColor(playerCard[i].getColor() - 4);
+            }
+        }
     }
 
+    /**
+     * this method sets count of coins if game is loaded
+     * @param c is count of coins
+     */
+    public void setCoins(int c){
+        this.coins=c;
+    }
+
+    /**
+     *
+     * @return deck, which player earned in round for line up a new playing deck (because each round except first is deck just removed, not shuffled
+     */
+    public Card[] getDeck(){
+        return deck;
+    }
+
+    /**
+     *
+     * @return id of player
+     */
+    public int getId(){
+        return id;
+    }
+
+    /**
+     * this method counts number of trumps and local trumps, which is needed for finding out if a turn was right
+     * @param localTrump is int which represent color of actual local trump
+     */
+    public void trumpsCount(int localTrump){
+        trumpCount=0;
+        localTrumpCount=0;
+        this.localTrump=localTrump;
+        for(int i=0; i<cardCount; i++){
+            if(playerCard[i].getColor()==trump) trumpCount++;
+            if(playerCard[i].getColor()==localTrump) localTrumpCount++;
+        }
+    }
+
+    /**
+     * Sets golbal trump (higher priority than local trump)
+     */
+    public void setTrumps(int trump){
+        this.trump=trump;
+    }
+
+    /**
+     * @return integer which represents count of cards whose color is tha same like trump color
+     */
+    public int getTrumpCount(){
+        return trumpCount;
+    }
+
+    /**
+     *
+     * @return integer which represents count of cards whose color is tha same like local trump color
+     */
+    public int getLocalTrumpCount(){
+        return localTrumpCount;
+    }
+
+    /**
+     * sets an integer 0 or 1 (true or false)
+     */
+    public void setYesOrNo(int i){
+        yesOrNO=i;
+    }
+
+    /**
+     *
+     * @return 0 or 1 (true or false) which represent players decision
+     */
+    public int getYesOrNo(){
+        return yesOrNO;
+    }
+
+    /**
+     *
+     * @param num is an index of card which should be returned
+     * @return card on index num from players cards
+     */
+    public Card getPlayerCard(int num){
+        return playerCard[num];
+    }
+
+    /**
+     * this method replace one of player cards another card
+     * @param num is index of card for replace
+     * @param card is card which will replace current player card
+     */
+    public void setPlayerCard(int num, Card card){
+        playerCard[num]=card;
+    }
+
+    /**
+     *
+     * @return count of coins, which player have
+     */
     public int getCoins() {
         return coins;
     }
 
-    public int deckSize() {
-        return deck.size();
+    /**
+     *
+     * @return number which represents count of cards in deck
+     */
+    public int getDeckSize(){
+        return deckSize;
     }
 
+    /**
+     *
+     * @param card is Card which will be added to deck array. In deck are triples of cards which player wins in some turn
+     */
     public void addToDeck(Card card) {
-        deck.add(card);
+        deck[deckSize]=card;
+        deckSize++;
     }
 
+    /**
+     * This method is called for bot player, who begins turn
+     * @return card, which will be placed as first in little deck
+     */
     public Card setCard() {
-        return playerCard.get(0);
-    }
-
-    public Card setCard(Card mainCard, int trump) {
-        Card temp=playerCard.get(0);
-        playerCard.remove(0);
+        int a = (int) (Math.random() * cardCount);
+        Card temp=playerCard[a];
+        playerCard[a]=playerCard[cardCount-1];
+        cardCount--;
         return temp;
     }
 
+    /**
+     * This method is called for bot player, for adding card to little deck
+     * If choosen card is first card which is not in contrast with rules
+     * @param localTrump is integer which represent color of local trump (it is color of first card in little deck)
+     * @return card which will be added to little deck
+     */
+    public Card setCard(int localTrump) {
+        this.localTrump=localTrump;
+        trumpsCount(localTrump);
+        int a = (int) (Math.random() * cardCount);
+
+        if(trumpCount>0){
+            for(int i=0; i<cardCount; i++){
+                if(playerCard[i].getColor()==trump) {
+                    a=i;
+                    break;
+                }
+            }
+        }
+        if(localTrumpCount>0){
+            for(int i=0; i<cardCount; i++){
+                if(playerCard[i].getColor()==localTrump) {
+                    a=i;
+                    break;
+                }
+            }
+        }
+        Card temp = playerCard[a];
+        playerCard[a]=playerCard[cardCount-1];
+        cardCount--;
+        return temp;
+    }
+
+    /**
+     * this method add card to an array where are cards which player plays with
+     */
     public void addCard(Card card) {
-        playerCard.add(card);
-        /*this.playerCard[cardCount] = card;*/
+        playerCard[cardCount]=card;
         cardCount++;
     }
+
+    /**
+     *
+     * @return String represents player name
+     */
     public String getName(){
         return name;
     }
 
+    /**
+     *
+     * @param num is index of card in array talon
+     * @return card from talon from choosen index
+     */
+    public Card getTalonCard(int num){
+        return talon[num];
+    }
+
+    /**
+     * @param num is index in array where card will be placed
+     * @param card is Card which will be added to players talon if he won licitation
+     */
+    public void setTalonCard(int num, Card card){
+        talon[num] = card;
+    }
+
+    /**
+     * If was played game 0 (Game), it has to be compared score of each player which depends on cards with walue 10 a 14 (ace)
+     * @return integer which represents score
+     */
     public int scoreOfGame() {
         int score = 0;
-        for (int i = 0; i < deckSize(); i++) {
-            if (deck.get(i).getValue() == 10) {
+        for (int i = 0; i < deckSize; i++) {
+            if (deck[i].getValue() == 10) {
                 score += 10;
-            } else if (deck.get(i).getValue() == 14) {
+            } else if (deck[i].getValue() == 14) {
                 score += 10;
             }
         }
         return score;
     }
 
+    /**
+     *
+     * @return boolean which says if player is user or bot
+     */
     public boolean isBot() {
         return isBot;
     }
 
-    public void pay(Player player, int flek, int game) {
+    /**
+     * method which is called after each round on player(s) who lose this round and he will than play to player(s) who win
+     * Value of int depends on flek and type of game
+     * @param player is opponent player who current player should pay
+     * @param flek is value of game
+     * @param game is type of game
+     * @return integer which has same value like that one which current player payed to winner
+     */
+    public int pay(Player player, int flek, int game) {
         int main = 0;
         switch (game) {
             case 0:
@@ -94,6 +296,8 @@ class Player {
             case 2:
                 main = DURCH_PRICE;
                 break;
+            default:
+                main = GAME_PRICE;
         }
         int num = (int) (main * (Math.pow(2, flek)));
         if (num > coins) {
@@ -101,133 +305,82 @@ class Player {
         }
         decreaseCoins(num);
         player.increaseCoins(num);
+        return num;
     }
 
+    /**
+     *
+     * @param num is integer which represents count of coins which should be added to current coins
+     */
     public void increaseCoins(int num) {
         this.coins = coins + num;
     }
 
-    public void decreaseCoins(int num) {
+    /**
+     *
+     * @param num is integer which represents count of coins which should be pay to another player
+     */
+    private void decreaseCoins(int num) {
         this.coins = coins - num;
     }
 
+    /**
+     * If player wins licitation, this method will be called and get him a talon (2 cards not used cards yet)
+     * @param talon is array of 2 Cards
+     * @return if player is bot it returns cards which he swap with talon
+     */
     public Card[] setTalon(Card[] talon) {
         this.talon = talon;
-        if (!isBot) {
-            System.out.println("Swap cards ");
-            printCards();
-            System.out.println("XXXXXXXXXXXXXXXXXXXXXXXX");
-            for (int i = 0; i < 2; i++) {
-                System.out.println(talon[i].toString());
-                System.out.println("0-10 what you want swap (10 nothing) for first card from talon");
-                Scanner scan = new Scanner(System.in);
-                int num = scan.nextInt();
-                if (num < 10) {
-                    /*Card temp = playerCard[num];
-                     playerCard[num] = talon[i];*/
-                    Card temp = playerCard.get(num);
-                    playerCard.set(num, talon[i]);
-                    talon[i] = temp;
-                }
-            }
-            printCards();
-
-        } else {
+        if (isBot) {
             for (int i = 0; i < 2; i++) {
                 int num = (int) (Math.random() * 10);
-                /*Card temp=playerCard[num];
-                 playerCard[num]=talon[i];*/
-                Card temp = playerCard.get(num);
-                playerCard.set(num, talon[i]);
+                Card temp = playerCard[num];
+                playerCard[num]= talon[i];
                 talon[i] = temp;
             }
         }
         return talon;
     }
 
-    public void printCards() {
-        String str = "";
-        for (int i = 0; i < cardCount; i++) {
-            str += playerCard.get(i).toString();
-        }
-        System.out.println(str);
-    }
-
+    /**
+     * @param cardCount is a number which shoud be setted as count of cards
+     */
     public void setCardCount(int cardCount) {
         this.cardCount = cardCount;
     }
 
+    /**
+     * This method is called if player is bot
+     * @return number which represents color of trump cards
+     */
     public int chooseTrumfs() {
         int trumfs = 0;
-        if (!isBot) {
-            System.out.println("Choose trumfs (0-3): 0=srdce, 1=kule, 2=zeleny, 3=zaludy");
-            Scanner scan = new Scanner(System.in);
-            trumfs = scan.nextInt();
-        } else {
-            trumfs = (int) (Math.random() * 4);
-        }
+        trumfs = (int) (Math.random() * 4);
         return trumfs;
     }
 
-    public boolean flek() {
-        boolean flek = false;
-        if (!isBot) {
-            System.out.println("Do you want flek? 0 no 1 yes");
-            Scanner scan = new Scanner(System.in);
-            int fl = scan.nextInt();
-            if (fl == 0) {
-                flek = false;
-            } else {
-                flek = true;
-            }
-        } else {
+    /**
+     * This method is called if player is bot. fl<2 means 66 percent probability that player want to play a fleck
+     * @return 0 or 1. It means if player wanted fleck or no
+     */
+    public int flek() {
+        int flek = 0;
             int fl = (int) (Math.random() * 3);
             if (fl < 2) {
-                flek = true;
+                flek = 1;
             } else {
-                flek = false;
+                flek = 0;
             }
-        }
+
         return flek;
     }
 
-    public int chooseGame(int level) {
-        int game = 0;
-        if (level == 2) {
-            game = 2;
-        } else {
-            if (!isBot) {
-                System.out.println("Choose game " + level + " - 2. 0 for Game, 1 for Betl, 2 for Durch");
-                Scanner scan = new Scanner(System.in);
-                game = scan.nextInt();
-            } else {
-                game = (int) ((Math.random() * (3 - level)) + level);
-            }
-        }
-        return game;
-    }
-
-    public boolean licitate(int level) {
-        if (!isBot) {
-
-            String str = "";
-            if (level == 0) {
-                str += "Hra";
-            } else if (level == 1) {
-                str += "Betl";
-            } else {
-                str += "Durch";
-            }
-            System.out.println("Wanna play " + str);
-            System.out.println("0 for pass, 1 for play");
-            Scanner scan = new Scanner(System.in);
-            int play = scan.nextInt();
-            if (play == 0) {
-                return false;
-            } else {
-                return true;
-            }
-        } else {
+    /**
+     *
+     * @param level represents level of current licitation (higher games are more dificult, so they have less probability
+     * @return 0 or 1 which means if player want plays higher game
+     */
+    public int licitate(int level) {
             int maxProbability = 0;
             switch (level) {
                 case 0:
@@ -239,27 +392,25 @@ class Player {
                 case 2:
                     maxProbability = 70;
                     break;
+                default:
+                    maxProbability = 50;
             }
             double probability = Math.random() * maxProbability;
             if (probability > 50) {
-                return true;
+                return 1;
             } else {
-                return false;
+                return 0;
             }
-        }
     }
 
-    public void removeDeck(Card[] card) {
-        int max = card.length - 1;
-        int half = 0;
-        if (isBot == false) {
-            while (half < 5 || half > 27) {
-                Scanner scan = new Scanner(System.in);
-                half = scan.nextInt();
-            }
-        } else {
-            half = (int) (Math.random() * 22 + 5);
-        }
+    /**
+     * This method removes card deck. It separates deck in two smaller decks and then it fix back in different order
+     * @param card is deck of playing cards
+     * @param h is number of cards which should be removed
+     * @return removed card as an array
+     */
+    public Card[] removeDeck(Card[] card, int h) {
+        int half = h;
         Card[] firstHalf = new Card[half];
         Card[] secondHalf = new Card[32 - half];
         for (int i = 0; i < half; i++) {
@@ -278,24 +429,7 @@ class Player {
             card[i] = firstHalf[temp];
             temp++;
         }
-
-        System.out.println("Karty byly sejmuty");
         half = 0;
-    }
-
-    public String toString() {
-        String str = "";
-        str += name + " \n";
-        /*for (int i = 0; i < cardCount; i++) {
-         str += playerCard[i].toString();
-         }*/
-        return str;
-    }
-
-    public void reset() {
-        cardCount = 0;
-        playerCard.clear();
-        deck.clear();
-        //talon??
+        return card;
     }
 }

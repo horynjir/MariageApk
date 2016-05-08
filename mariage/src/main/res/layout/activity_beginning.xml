@@ -24,27 +24,37 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/c1"
-                    android:clickable="true" />
+                    android:clickable="true"
+                    android:visibility="gone"
+                    android:onClick="clickCard" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/c2" />
+                    android:id="@+id/c2"
+                    android:visibility="gone"
+                    android:onClick="clickCard" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/c3" />
+                    android:id="@+id/c3"
+                    android:visibility="gone"
+                    android:onClick="clickCard" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/c4" />
+                    android:id="@+id/c4"
+                    android:visibility="gone"
+                    android:onClick="clickCard" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/c5" />
+                    android:id="@+id/c5"
+                    android:visibility="gone"
+                    android:onClick="clickCard" />
             </TableRow>
 
             <TableRow
@@ -56,53 +66,542 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/c6"
                     android:clickable="true"
-                    android:visibility="visible" />
+                    android:visibility="gone"
+                    android:onClick="clickCard" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/c7" />
+                    android:id="@+id/c7"
+                    android:visibility="gone"
+                    android:onClick="clickCard" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/c8" />
+                    android:id="@+id/c8"
+                    android:visibility="gone"
+                    android:onClick="clickCard" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/c9" />
+                    android:id="@+id/c9"
+                    android:visibility="gone"
+                    android:onClick="clickCard" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/c10" />
+                    android:id="@+id/c10"
+                    android:visibility="gone"
+                    android:onClick="clickCard" />
             </TableRow>
         </TableLayout>
-        <SeekBar
-            android:layout_width="fill_parent"
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="380dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="180dp"
+            android:layout_marginRight="5dp"
+            android:id="@+id/tableLayout3">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot201"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot202"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot203"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot204"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot205"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot206"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot207"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot208"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot209"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot210"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+            </TableRow>
+
+        </TableLayout>
+
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="470dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="90dp"
+            android:layout_marginRight="5dp"
+            android:id="@+id/tableLayout2">
+
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot101"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot102"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot103"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot104"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot105"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot106"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot107"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot108"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot109"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bot110"
+                    android:src="@mipmap/c50"
+                    android:layout_margin="3dp"
+                    android:visibility="invisible" />
+            </TableRow>
+
+        </TableLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/remove"
-            android:layout_marginBottom="190dp"
-            android:indeterminate="false"
-            android:max="32"
-            android:layout_alignBottom="@+id/tableLayout"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
+            android:id="@+id/name2"
+            android:layout_marginTop="160dp"
+            android:layout_alignRight="@+id/tableLayout"
+            android:layout_alignEnd="@+id/tableLayout"
+            android:layout_marginLeft="10dp"
+            android:layout_below="@+id/count" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/coins1"
+            android:layout_alignBottom="@+id/name1"
+            android:layout_alignLeft="@+id/tableLayout"
+            android:layout_alignStart="@+id/tableLayout" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/coins2"
+            android:layout_alignBottom="@+id/name2"
+            android:layout_alignLeft="@+id/coins1"
+            android:layout_alignStart="@+id/coins1" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="350dp"
+            android:layout_marginBottom="170dp">
+
+            <SeekBar
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/remove"
+                android:indeterminate="false"
+                android:max="32"
+                android:visibility="gone"
+                android:layout_centerVertical="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/count"
+                android:visibility="gone" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Yes"
+                android:id="@+id/yes"
+                android:visibility="gone"
+                android:layout_marginLeft="66dp"
+                android:layout_marginStart="66dp"
+                android:layout_alignTop="@+id/no"
+                android:layout_toRightOf="@+id/remove"
+                android:layout_toEndOf="@+id/remove"
+                android:onClick="yesOrNo" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No"
+                android:id="@+id/no"
+                android:visibility="gone"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@+id/yes"
+                android:layout_toEndOf="@+id/yes"
+                android:layout_marginLeft="82dp"
+                android:layout_marginStart="82dp"
+                android:onClick="yesOrNo" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="X"
+                android:id="@+id/cancel"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"
+                android:onClick="clickCard" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Next turn"
+                android:id="@+id/turn"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"
+                android:onClick="playerTurn" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Result"
+                android:id="@+id/result"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:onClick="result"
+                android:visibility="gone" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/playerCoins"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginBottom="20dp"
+                android:layout_marginLeft="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/playerName"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="20dp"
+                android:layout_marginRight="10dp"
+                android:textSize="17dp"
+                />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Next round"
+                android:id="@+id/nextRound"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"
+                android:onClick="nextRound" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/actual"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:textSize="20dp"
+            android:visibility="visible" />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="250dp"
+            android:layout_marginTop="250dp"
+            android:layout_centerHorizontal="true">
+
+            <TableLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:id="@+id/tableLayout4">
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/talon1"
+                        android:layout_margin="5dp"
+                        android:visibility="gone" />
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/talon2"
+                        android:layout_margin="5dp"
+                        android:visibility="gone" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/hearts"
+                            android:src="@mipmap/hearts"
+                            android:minHeight="100dp"
+                            android:minWidth="50dp"
+                            android:onClick="trumps"
+                            android:visibility="gone" />
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/bells"
+                            android:src="@mipmap/bells"
+                            android:minHeight="100dp"
+                            android:minWidth="50dp"
+                            android:onClick="trumps"
+                            android:visibility="gone" />
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/acorns"
+                            android:src="@mipmap/acorns"
+                            android:minHeight="100dp"
+                            android:minWidth="50dp"
+                            android:onClick="trumps"
+                            android:visibility="gone" />
+
+                        <ImageButton
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/leaves"
+                            android:src="@mipmap/leaves"
+                            android:minHeight="100dp"
+                            android:minWidth="50dp"
+                            android:onClick="trumps"
+                            android:visibility="gone" />
+                    </LinearLayout>
+
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/deck1"
+                            android:layout_margin="7dp"
+                            android:src="@mipmap/c14"
+                            android:visibility="gone" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/deck2"
+                            android:layout_margin="7dp"
+                            android:src="@mipmap/c14"
+                            android:visibility="gone" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/deck3"
+                            android:layout_margin="7dp"
+                            android:src="@mipmap/c14"
+                            android:visibility="gone" />
+                    </LinearLayout>
+                </TableRow>
+            </TableLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/message"
+                android:layout_above="@+id/tableLayout4"
+                android:layout_centerHorizontal="true"
+                android:visibility="gone"
+                android:textSize="20dp"
+                />
+
+        </RelativeLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/trump"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="10dp"
             android:visibility="gone" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/count"
-            android:layout_above="@+id/remove"
-            android:layout_alignLeft="@+id/tableLayout"
-            android:layout_alignStart="@+id/tableLayout"
-            android:minHeight="30dp"
-            android:maxHeight="30dp"
-            android:minWidth="40dp"
-            android:maxWidth="40dp"
-            android:visibility="gone" />
+            android:id="@+id/name1"
+            android:layout_below="@+id/actual"
+            android:layout_alignRight="@+id/name2"
+            android:layout_alignEnd="@+id/name2"
+            android:layout_marginTop="30dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/game"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_margin="7dp"
+            android:visibility="gone"
+            android:textSize="20dp"
+            />
 
 
     </RelativeLayout>

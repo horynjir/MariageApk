@@ -10,6 +10,7 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".Main"
+            android:screenOrientation="locked"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,10 +19,12 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".About">
+        <activity android:name=".About"
+            android:screenOrientation="locked">
 
         </activity>
-        <activity android:name=".Arena">
+        <activity android:name=".Arena"
+            android:screenOrientation="locked">
 
         </activity>
 

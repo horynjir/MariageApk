@@ -6,7 +6,10 @@ package pr2.fel.cvut.cz.mariageapk;
 public class MakeDeck {
 
     Card[] card = new Card[32];
-    //ArrayList<Card> card=new ArrayList<Card>();
+
+    /**
+     * This method makes a new deck with 32 cards and set them an ID, which is needed for GUI
+     */
     public void setDeck() {
         int temp = 0;
         for (int color = 0; color < 4; color++) {
@@ -50,6 +53,27 @@ public class MakeDeck {
 
     }
 
+    /**
+     * This method shuffles deck of card. It uses two random integers, which means cards which should be swaped. Third random integer means count of these operations
+     * @param card is deck of cards which should be shuffled
+     * @return shuffled deck of cards
+     */
+    public Card[] shuffleDeck(Card[] card) {
+        int num = (int) ((Math.random() * 50) + 51);
+        for (int i = 0; i < num; i++) {
+            int a = (int) (Math.random() * 32);
+            int b = (int) (Math.random() * 32);
+            Card temp = card[a];
+            card[a] = card[b];
+            card[b] = temp;
+        }
+        return card;
+    }
+
+    /**
+     *
+     * @return deck of cards
+     */
     public Card[] getDeck(){
         return card;
     }

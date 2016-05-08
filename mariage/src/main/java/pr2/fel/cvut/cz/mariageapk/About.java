@@ -12,9 +12,8 @@ import android.widget.TextView;
 public class About extends Activity{
 
     TextView text1;
-    //TextView text2;
     TextView text3;
-    EditText text4;
+    TextView text4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,13 +22,13 @@ public class About extends Activity{
         setText();
     }
 
+    /**
+     * This method just set text to TextView for informate user about general informations of this project
+     */
     private void setText(){
         text1 = (TextView)findViewById(R.id.about1);
-        //text2 = (TextView)findViewById(R.id.about2);
         text3 = (TextView)findViewById(R.id.about3);
-        text4 = (EditText)findViewById(R.id.about4);
-/**/
-
+        text4 = (TextView)findViewById(R.id.about4);
         text1.setText("About");
         text4.setText("This application was created for PR2 like a semestral project. For more informations contact me on horynajirka@seznam.cz");
         text3.setText("Created by J. Horyna, 2016");

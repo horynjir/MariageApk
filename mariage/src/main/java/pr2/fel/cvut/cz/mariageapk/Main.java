@@ -1,6 +1,4 @@
 package pr2.fel.cvut.cz.mariageapk;
-
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
@@ -8,23 +6,20 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 
 public class Main extends ActionBarActivity {
     private String name;
+    private int game;
     private EditText newName;
-    private Button buttonNew;
-    private Button buttonContinue;
-    private ImageView cardImage;
-    private int baf=R.mipmap.c20;
-
-
-    public static final String MY_TAG = "the_custom_message";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,65 +32,41 @@ public class Main extends ActionBarActivity {
 
     }
 
-
+    /**
+     * This method start when button New game is clicked. It sets name of user and starts new activity by intent
+     */
     public void setNewGame(View view){
+        game=0;
         newName=(EditText)findViewById(R.id.name);
         name = newName.getText().toString();
         Intent newGame= new Intent(this, Arena.class);
         newGame.putExtra("SLOVO", name);
+        newGame.putExtra("GAME", game);
         startActivity(newGame);
     }
 
-
-    /*public void newGame(){
+    public void continueGame(View view){
+        game=1;
         newName=(EditText)findViewById(R.id.name);
-        name=newName.getText().toString();
-        cardImage=(ImageView)findViewById(R.id.imageView);
-        buttonNew=(Button)findViewById(R.id.newGame);
-
-        buttonNew.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        cardImage.setImageResource(baf);*/
-                        /*Toast.makeText(
-                                Main.this, "abcd---"+baf+"-"+baf2+"-"+baf3+"-"+baf4+"-"+baf5+"-"+baf6+"-"+baf7+"-"+baf8+"-"+baf9+"-"+baf10+"-"+baf11+"-"+baf12+"-"+baf13+"-"+baf14+"-"+baf15+"-"+baf16+"-"+baf17+"-"+baf18+"-"+baf19+"-"+baf20+"-"+baf21+"-"+baf22+"-"+baf23+"-"+baf24+"-"+baf25+"-"+baf26+"-"+baf27+"-"+baf28+"-"+baf29+"-"+baf30+"-"+baf31+"-"+baf32, Toast.LENGTH_SHORT
-                        ).show();*/
-                        /*if(name==null || name=="Name"){
-                            Toast.makeText(
-                              Main.this, "Set please your name", Toast.LENGTH_LONG
-                            ).show();
-                        }
-                        else{
-                            setContentView(R.layout.hokus);
-                        }*/
-
-                /*    }
-                }
-        );
-    }*/
-
+        name = newName.getText().toString();
+        Intent continueGame= new Intent(this, Arena.class);
+        continueGame.putExtra("SLOVO", "default");
+        continueGame.putExtra("GAME", game);
+        startActivity(continueGame);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
-
-
+    /**
+     * If "About" in optionsItem is selected, new activity is started, where are informations abou this project
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
 
         if (id == R.id.action_about) {
             Intent about= new Intent(this, About.class);

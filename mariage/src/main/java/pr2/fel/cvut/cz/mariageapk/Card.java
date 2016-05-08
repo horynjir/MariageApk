@@ -12,7 +12,7 @@ package pr2.fel.cvut.cz.mariageapk;
 class Card {
 
     private final int value;
-    private final int color;
+    private int color;
     private int id;
 
     Card(int value, int color) {
@@ -21,22 +21,52 @@ class Card {
 
     }
 
+    /**
+     * set color of card
+     * @param c is color (0-3 standart)
+     */
+    public void setColor(int c){
+        this.color=c;
+    }
+
+    /**
+     *
+     * @return value of card (7-14)
+     */
     public int getValue() {
         return this.value;
     }
 
+    /**
+     *
+     * @return color of card (0-3]
+     */
     public int getColor() {
         return this.color;
     }
 
+    /**
+     * This method sets id of card, which means id of png in mipmap
+     */
     public void setId(int id){
         this.id = id;
     }
 
+    /**
+     *
+     * @return id of card. It is needed for GUI
+     */
     public int getId(){
         return id;
     }
 
+    /**
+     * This method is important for comparison in game, it depends on trumps and type of game
+     * @param localTrump is color of first card in little deck
+     * @param trump is global trump for game, it can be localTrump
+     * @param game is "value" of each round
+     * @return integer which means "value" of card
+     */
     public int cardPoints(int localTrump, int trump, int game) {
         int bonus = 0;
         if (color == trump) {
@@ -58,46 +88,6 @@ class Card {
                 temp = 10;
             }
         }
-        return bonus * temp;
-    }
-
-    public String toString() {
-        String str = "";
-        String clr = "";
-        switch (this.color) {
-            case 0:
-                clr = "srdce";
-                break;
-            case 1:
-                clr = "kule";
-                break;
-            case 2:
-                clr = "zeleny";
-                break;
-            case 3:
-                clr = "zlaudy";
-                break;
-        }
-        String num = "";
-        if (this.value < 11) {
-            num += value;
-        } else {
-            switch (value) {
-                case 11:
-                    num += "spodek";
-                    break;
-                case 12:
-                    num += "svrsek";
-                    break;
-                case 13:
-                    num += "kral";
-                    break;
-                case 14:
-                    num += "eso";
-                    break;
-            }
-        }
-        str += "Barva: " + clr + " hodnota: " + num + "\n";
-        return str;
+        return bonus*temp;
     }
 }
