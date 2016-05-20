@@ -939,20 +939,24 @@ public class Arena extends Activity {
      */
     private void actualize() {
         LOG.info("Infromations are actualized");
-        String str = " coins";
-        for(int i = 0;i<3;i++){
-            if (player[i].getId() == 1) {
-                playerName.setText(player[i].getName());
-                playerCoins.setText(player[i].getCoins() + str);
-            } else if (player[i].getId() == 2) {
-                name1.setText(player[i].getName());
-                coins1.setText(player[i].getCoins() + str);
-            } else {
-                name2.setText(player[i].getName());
-                coins2.setText(player[i].getCoins() + str);
+                String str = " coins";
+                for(
+                        int i = 0;
+                        i<3;i++)
+
+                {
+                    if (player[i].getId() == 1) {
+                        playerName.setText(player[i].getName());
+                        playerCoins.setText(player[i].getCoins() + str);
+                    } else if (player[i].getId() == 2) {
+                        name1.setText(player[i].getName());
+                        coins1.setText(player[i].getCoins() + str);
+                    } else {
+                        name2.setText(player[i].getName());
+                        coins2.setText(player[i].getCoins() + str);
+                    }
+                }
             }
-        }
-    }
 
     private void swapPlayers() {
         LOG.info("Players were swapped");
